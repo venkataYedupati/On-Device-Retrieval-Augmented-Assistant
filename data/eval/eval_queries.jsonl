@@ -1,0 +1,2 @@
+{"question":"How is retrieval latency optimized on constrained devices?","top_k":5,"relevant_source_ids":["edge_rag_overview"]}
+{"question":"What does dynamic INT8 quantization improve?","top_k":5,"relevant_source_ids":["quantization_notes"]}
