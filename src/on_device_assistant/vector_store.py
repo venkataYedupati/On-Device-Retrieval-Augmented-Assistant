@@ -69,7 +69,8 @@ class ChromaVectorStore(VectorStore):
         metadatas = result.get("metadatas", [[]])[0]
         distances = result.get("distances", [[]])[0]
         retrieved: list[RetrievedChunk] = []
-        for chunk_id, text, metadata, distance in zip(ids, docs, metadatas, distances, strict=False):
+        zipped_results = zip(ids, docs, metadatas, distances, strict=False)
+        for chunk_id, text, metadata, distance in zipped_results:
             metadata = dict(metadata or {})
             source_id = str(metadata.pop("source_id", "unknown"))
             chunk_index = int(metadata.pop("chunk_index", 0))
@@ -132,7 +133,10 @@ class SQLiteVectorStore(VectorStore):
         if not chunk_ids:
             return
         with self._connect() as conn:
-            conn.executemany("DELETE FROM vectors WHERE chunk_id = ?", [(chunk_id,) for chunk_id in chunk_ids])
+            conn.executemany(
+                "DELETE FROM vectors WHERE chunk_id = ?",
+                [(chunk_id,) for chunk_id in chunk_ids],
+            )
 
     def query(self, embedding: list[float], top_k: int) -> list[RetrievedChunk]:
         with self._connect() as conn:
@@ -223,7 +227,11 @@ def _cosine_similarity(left: list[float], right: list[float]) -> float:
     return numerator / (left_norm * right_norm)
 
 
-def build_vector_store(path: Path, collection_name: str, allow_memory_fallback: bool) -> VectorStore:
+def build_vector_store(
+    path: Path,
+    collection_name: str,
+    allow_memory_fallback: bool,
+) -> VectorStore:
     try:
         return ChromaVectorStore(path=path, collection_name=collection_name)
     except Exception:

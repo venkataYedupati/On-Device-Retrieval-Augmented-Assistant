@@ -27,9 +27,10 @@ def run_benchmark(
             latencies.append((time.perf_counter() - started) * 1000)
             retrieval_latencies.append(result.retrieval_latency_ms)
         if "relevant_source_ids" in item:
+            relevant_source_ids = set(item["relevant_source_ids"])
             ndcg_scores.append(
                 ndcg_at_k(
-                    [source.source_id in set(item["relevant_source_ids"]) for source in result.sources],
+                    [source.source_id in relevant_source_ids for source in result.sources],
                     k=len(result.sources),
                 )
             )

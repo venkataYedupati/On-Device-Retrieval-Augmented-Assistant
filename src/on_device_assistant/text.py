@@ -94,7 +94,11 @@ def split_text(text: str, chunk_size: int, chunk_overlap: int) -> list[str]:
             chunk_overlap=chunk_overlap,
             separators=["\n\n", "\n", ". ", " ", ""],
         )
-        return [normalize_text(chunk) for chunk in splitter.split_text(text) if normalize_text(chunk)]
+        return [
+            normalize_text(chunk)
+            for chunk in splitter.split_text(text)
+            if normalize_text(chunk)
+        ]
     except ModuleNotFoundError:
         return _fallback_split_text(text, chunk_size=chunk_size, chunk_overlap=chunk_overlap)
 

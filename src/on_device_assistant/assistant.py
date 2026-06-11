@@ -31,7 +31,7 @@ class RagAssistant:
         self.generator = generator
 
     @classmethod
-    def from_settings(cls, settings: Settings | None = None) -> "RagAssistant":
+    def from_settings(cls, settings: Settings | None = None) -> RagAssistant:
         settings = settings or Settings()
         settings.ensure_dirs()
         document_store = SQLiteDocumentStore(settings.sqlite_path, settings.collection_name)
@@ -83,7 +83,12 @@ class RagAssistant:
     def ingest_paths(self, path: Path, recursive: bool = False) -> list[IngestResult]:
         return [self.ingest_document(document) for document in load_documents(path, recursive)]
 
-    def query(self, question: str, top_k: int | None = None, use_reranker: bool = True) -> QueryResult:
+    def query(
+        self,
+        question: str,
+        top_k: int | None = None,
+        use_reranker: bool = True,
+    ) -> QueryResult:
         total_started = time.perf_counter()
         top_k = top_k or self.settings.default_top_k
         candidate_limit = max(top_k, top_k * 4 if use_reranker else top_k)

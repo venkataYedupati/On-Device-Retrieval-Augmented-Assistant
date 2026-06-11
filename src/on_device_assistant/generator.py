@@ -31,7 +31,9 @@ class ExtractiveAnswerGenerator:
                     continue
                 sentence_tokens = set(tokenize(sentence))
                 overlap = len(query_tokens & sentence_tokens) / max(1, len(query_tokens))
-                scored_sentences.append((overlap + source.score * 0.05, source_index, sentence, source))
+                scored_sentences.append(
+                    (overlap + source.score * 0.05, source_index, sentence, source)
+                )
 
         if not scored_sentences:
             best = sources[0]
@@ -58,7 +60,10 @@ class TransformersAnswerGenerator:
         if not sources:
             return "I could not find relevant local context for that question."
         context = "\n\n".join(source.text for source in sources[:4])
-        prompt = f"Answer using only this context.\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
+        prompt = (
+            "Answer using only this context.\n\n"
+            f"Context:\n{context}\n\nQuestion: {question}\nAnswer:"
+        )
         output = self.pipeline(prompt, max_new_tokens=220, do_sample=False)[0]["generated_text"]
         return str(output).strip()
 

@@ -9,12 +9,22 @@ from on_device_assistant.text import tokenize
 
 
 class Reranker(Protocol):
-    def rerank(self, question: str, candidates: list[RetrievedChunk], limit: int) -> list[RetrievedChunk]:
+    def rerank(
+        self,
+        question: str,
+        candidates: list[RetrievedChunk],
+        limit: int,
+    ) -> list[RetrievedChunk]:
         raise NotImplementedError
 
 
 class LexicalReranker:
-    def rerank(self, question: str, candidates: list[RetrievedChunk], limit: int) -> list[RetrievedChunk]:
+    def rerank(
+        self,
+        question: str,
+        candidates: list[RetrievedChunk],
+        limit: int,
+    ) -> list[RetrievedChunk]:
         query_tokens = set(tokenize(question))
         rescored: list[RetrievedChunk] = []
         for candidate in candidates:
@@ -32,7 +42,12 @@ class CrossEncoderReranker:
 
         self.model = CrossEncoder(model_name, device=device)
 
-    def rerank(self, question: str, candidates: list[RetrievedChunk], limit: int) -> list[RetrievedChunk]:
+    def rerank(
+        self,
+        question: str,
+        candidates: list[RetrievedChunk],
+        limit: int,
+    ) -> list[RetrievedChunk]:
         if not candidates:
             return []
 
